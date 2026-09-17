@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+web/node_modules/
+studio/node_modules/
+
+# next.js
+web/.next/
+web/out/
+web/next-env.d.ts
+
+# sanity
+studio/dist/
+
+# env
+.env
+.env.local
+.env.*.local
+web/.env
+web/.env.local
+studio/.env
+
+# misc
+.DS_Store
+*.log
+npm-debug.log*
+.vercel
+studio/.sanity/
+*.tsbuildinfo

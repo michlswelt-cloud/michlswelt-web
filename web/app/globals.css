@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Fallback-Werte, falls siteSettings in Sanity noch nicht gepflegt sind. */
+  --color-primary: #1f2937;
+  --color-secondary: #4b5563;
+  --color-accent: #d97706;
+  --color-background: #ffffff;
+  --color-text: #111827;
+  --font-heading: 'Georgia', serif;
+  --font-body: 'Arial', sans-serif;
+  --radius-base: 0.5rem;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
