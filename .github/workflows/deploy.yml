@@ -1,0 +1,50 @@
+name: Deploy Website
+
+# Baut die Next.js-Seite als statischen Export und laedt sie per FTP auf den
+# Strato-Webspace hoch. Wird bei jedem Push auf main ausgefuehrt, kann aber
+# auch manuell oder per Webhook (z.B. Sanity "Publish"-Aktion) angestossen
+# werden - siehe README.md, Abschnitt "Deployment".
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [sanity-publish]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Abhaengigkeiten installieren
+        working-directory: web
+        run: npm install
+
+      - name: Statischen Export bauen
+        working-directory: web
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          NEXT_PUBLIC_SANITY_API_VERSION: '2024-01-01'
+        run: npm run build
+
+      - name: Per FTP zu Strato deployen
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.STRATO_FTP_SERVER }}
+          username: ${{ secrets.STRATO_FTP_USERNAME }}
+          password: ${{ secrets.STRATO_FTP_PASSWORD }}
+          local-dir: ./web/out/
+          server-dir: ${{ secrets.STRATO_FTP_TARGET_DIR }}
